@@ -1,110 +1,141 @@
-# Using Git Hooks in Flutter Projects
+# Using Git Hooks in Flutter Projects (Without Third-Party Libraries)
 
-## What are Git Hooks?
-
-Git hooks are scripts that Git automatically executes before or after specific events (like commit, push, etc.). They help enforce rules or automate workflows in your codebase.
-
-## Why Use Git Hooks in Flutter Projects?
-
-Using Git hooks in a Flutter project can:
-
-* Ensure code quality (e.g., format and lint before committing)
-* Prevent committing debug prints or unwanted files
-* Enforce commit message conventions
-* Help junior developers follow team coding standards
-
-## Common Hooks You Can Use
-
-* `pre-commit`: Runs before a commit is made. Great for linting and formatting code.
-* `commit-msg`: Validates commit messages.
-* `pre-push`: Checks tests or ensures code builds before pushing.
+Git hooks are scripts that run automatically at certain points in the Git lifecycle (e.g., before committing, after merging, etc.). They're useful for enforcing coding standards, formatting code, or preventing bad commits—especially helpful when working with junior developers.
 
 ---
 
-## Step-by-Step Guide to Implement Git Hooks in Flutter
+## ✅ Benefits of Using Git Hooks with Junior Developers
 
-### Step 1: Create a `.git/hooks` Script
+* Enforces coding and formatting standards.
+* Prevents bad code from being committed.
+* Helps automate repetitive tasks (e.g., running tests, linting).
+* Acts as a safety net before code goes into the repository.
 
-1. Navigate to your project folder.
-2. Go to the `.git/hooks` directory.
-3. Create or modify the hook file, e.g., `pre-commit`, and make it executable:
+---
+
+## 🛠 Step-by-Step: Implement Git Hooks in Flutter
+
+### Step 1: Navigate to the `.git/hooks` directory
+
+In your Flutter project root, navigate to:
 
 ```bash
 cd .git/hooks
-touch pre-commit
+```
+
+This folder contains sample hook scripts like `pre-commit.sample`, `pre-push.sample`, etc.
+
+### Step 2: Create or Modify Hook Files
+
+Rename or create a new hook script. For example:
+
+```bash
+mv pre-commit.sample pre-commit
+```
+
+Make it executable:
+
+```bash
 chmod +x pre-commit
 ```
 
-### Step 2: Add Your Script
+### Step 3: Add Your Flutter-Specific Script
 
-Here's an example `pre-commit` script to check formatting and linting:
+Edit the `pre-commit` file:
+
+```bash
+nano pre-commit
+```
+
+Example content:
 
 ```bash
 #!/bin/sh
 
-echo "Running Flutter format check..."
-flutter format --set-exit-if-changed .
+# Format Dart code before commit
+echo "Running flutter format..."
+flutter format .
 
-if [ $? -ne 0 ]; then
-  echo "Formatting issues found. Please run flutter format."
-  exit 1
-fi
-
-echo "Running Flutter analyze..."
+# Run analyzer to catch errors
+echo "Running flutter analyze..."
 flutter analyze
 
+# If the analyzer fails, reject the commit
 if [ $? -ne 0 ]; then
-  echo "Analysis failed. Fix the issues before committing."
+  echo "Code analysis failed. Please fix the issues before committing."
   exit 1
 fi
 
+echo "Pre-commit checks passed."
 exit 0
 ```
 
-This prevents commits if the code is not formatted or has analysis issues.
+### Step 4: Try a Commit
+
+Try committing some changes:
+
+```bash
+git add .
+git commit -m "Test commit with hooks"
+```
+
+You’ll see the script automatically formats and analyzes your code.
 
 ---
 
-### Step 3: Share Hooks with Team
+## 🔧 Commonly Used Git Hooks and Their Use Cases
 
-Git doesn’t track `.git/hooks` by default. To share hooks with your team:
+| Hook                 | Trigger Point                      | Common Use Cases                                           |
+| -------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| `pre-commit`         | Before `git commit`                | Format, lint, run tests, prevent bad code                  |
+| `prepare-commit-msg` | Before commit message editor opens | Auto-fill commit messages with ticket ID                   |
+| `commit-msg`         | After commit message entered       | Enforce message formats (e.g., Conventional Commits)       |
+| `pre-push`           | Before `git push`                  | Run tests, ensure no debug prints, prevent pushing to main |
+| `post-merge`         | After `git merge`                  | Auto-install packages, show success message                |
+| `post-checkout`      | After switching branches           | Show branch-specific info, sync dependencies               |
 
-1. Create a `hooks/` folder in the root of your project.
-2. Add your hook scripts there (e.g., `hooks/pre-commit`).
-3. Create a setup script to install them:
+---
+
+## 👨‍💻 Best Practices for Flutter Teams
+
+* **Share hooks via template:** Store your custom hooks in a shared directory like `.githooks` and configure Git to use them:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+* **Always commit executable scripts**
+* **Use hooks to enforce team-wide quality** (lint rules, tests, code format)
+* **Avoid third-party libraries** unless necessary for larger teams
+
+---
+
+## 🧪 Sample `pre-push` Hook
 
 ```bash
 #!/bin/sh
-cp hooks/* .git/hooks/
-chmod +x .git/hooks/*
-echo "Hooks installed!"
+
+# Run flutter test before push
+echo "Running tests before push..."
+flutter test
+
+if [ $? -ne 0 ]; then
+  echo "Tests failed. Push rejected."
+  exit 1
+fi
+
+echo "All tests passed. Proceeding with push."
+exit 0
 ```
 
-4. Ask juniors to run this setup script once:
-
-```bash
-sh setup_hooks.sh
-```
-
 ---
 
-## How This Helps Junior Developers
+## ✅ Summary
 
-* Ensures they write clean, formatted, and error-free code.
-* Reduces need for code review comments on basics.
-* Automates tedious checks.
-* Reinforces discipline in workflow (e.g., writing good commit messages).
+Git hooks are powerful automation tools for maintaining code quality and helping junior developers stay within best practices without extra tools. You can:
 
----
+* Format and analyze code before commit.
+* Prevent pushes with failing tests.
+* Standardize commit messages.
 
-## Tips
-
-* You can use packages like `lefthook` or `husky` (via Node.js) for better management.
-* Integrate testing (`flutter test`) in `pre-push` hook.
-* Educate juniors on what each script does.
-
----
-
-## Conclusion
-
-Git hooks are a powerful way to automate and enforce best practices in your Flutter projects. Set them up once and enjoy cleaner, safer code — especially helpful when working with junior developers.
+All without needing any extra libraries.
