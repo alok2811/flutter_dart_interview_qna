@@ -1,0 +1,136 @@
+# Flutter App Performance Best Practices
+
+Optimizing the performance of a Flutter app is crucial for ensuring a smooth, responsive user experience. Here are all the key practices developers should follow to enhance Flutter app performance:
+
+---
+
+## 1. **Use Const Constructors Wherever Possible**
+
+* Reuse widgets with `const` keyword to avoid unnecessary rebuilds.
+
+```dart
+const Text('Hello');
+```
+
+## 2. **Avoid Rebuilding Entire Widget Trees**
+
+* Split large widgets into smaller ones.
+* Use `ValueListenableBuilder`, `Selector`, or `BlocBuilder` for controlled rebuilding.
+
+## 3. **Use ListView\.builder, GridView\.builder for Long Lists**
+
+* These are lazily built and only render visible items.
+
+```dart
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) => ListTile(title: Text(items[index])),
+);
+```
+
+## 4. **Cache Images Efficiently**
+
+* Use `cached_network_image` package to reduce image load times.
+
+## 5. **Minimize Overdraw**
+
+* Avoid placing multiple layers over each other without transparency.
+* Prefer `Opacity(opacity: 0)` instead of `Visibility(visible: false)` where hiding is needed.
+
+## 6. **Use Lazy Loading and Pagination**
+
+* Load data in chunks using `ListView.builder` + scroll controller.
+
+## 7. **Use Efficient State Management**
+
+* Use proper state management (e.g., Bloc, Provider, GetX) to prevent full widget tree rebuilds.
+
+## 8. **Avoid Using Opacity Widget Excessively**
+
+* Prefer `FadeTransition` or `AnimatedOpacity` for animations.
+
+## 9. **Use `RepaintBoundary` for Complex Widgets**
+
+* Wrap animations or frequently updated widgets to isolate repaints.
+
+```dart
+RepaintBoundary(
+  child: CustomPaint(...),
+);
+```
+
+## 10. **Defer Work with `SchedulerBinding.instance.addPostFrameCallback()`**
+
+* Useful for heavy tasks or API calls after first render.
+
+## 11. **Optimize Build Method**
+
+* Avoid calculations, heavy loops or allocations inside the `build()` method.
+
+## 12. **Preload Assets**
+
+* Use `precacheImage()` or load assets early to avoid UI jank.
+
+## 13. **Reduce Use of SetState()**
+
+* Use state management or `ValueNotifier` for more control.
+* Avoid calling `setState` too frequently.
+
+## 14. **Dispose Controllers and Listeners Properly**
+
+* Prevent memory leaks by disposing controllers, streams, animations.
+
+## 15. **Use Isolates for Heavy Computation**
+
+* Dart Isolates run on background threads.
+
+```dart
+compute(expensiveFunction, input);
+```
+
+## 16. **Compress Images and Media**
+
+* Use optimized image sizes.
+* Use formats like WebP instead of PNG/JPEG where supported.
+
+## 17. **Use Flutter DevTools**
+
+* Profile performance, memory, and rendering using DevTools.
+* Analyze slow frames and widget rebuilds.
+
+## 18. **Avoid Unnecessary Packages**
+
+* Only use essential dependencies.
+* Periodically audit `pubspec.yaml`.
+
+## 19. **Use `flutter build --release` for Production**
+
+* Ensure production build is optimized.
+
+```bash
+flutter build apk --release
+```
+
+## 20. **Use Lazy Singleton or Dependency Injection**
+
+* Prevent large classes from initializing too early.
+* Use packages like `get_it` or `injectable`.
+
+---
+
+## Bonus Tips for Teams
+
+* Enforce best practices in code reviews.
+* Benchmark regularly during development.
+* Educate juniors to recognize costly UI patterns.
+* Monitor app performance post-launch using tools like Firebase Performance Monitoring.
+
+---
+
+## Resources
+
+* [Flutter Performance Docs](https://docs.flutter.dev/perf)
+* [Flutter DevTools](https://docs.flutter.dev/tools/devtools/overview)
+* [Dart Dev Performance Guide](https://dart.dev/guides/performance)
+
+Performance is a continuous effort. Following these tips ensures your app stays fast, responsive, and ready for production at scale.
