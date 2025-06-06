@@ -1,7 +1,5 @@
 # Explain Coloredbox in Flutter
 
-### 🎨 `ColoredBox` in Flutter — Explained
-
 `ColoredBox` is a **lightweight widget** used to draw a **solid color behind its child** — **nothing more, nothing less**.
 
 ---
@@ -67,4 +65,3 @@ SizedBox(
 )
 ```
 
----
