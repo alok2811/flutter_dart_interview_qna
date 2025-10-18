@@ -1,4 +1,5 @@
-## 🚀 **InheritedWidget in Flutter**  
+## Explain InheritedWidget in Flutter
+
 An **InheritedWidget** is a Flutter widget that allows **data to flow down** the widget tree and be accessed by its descendants. It’s useful when you need to **pass data or state** to child widgets **without needing to pass them through constructors** repeatedly.  
 
 ---
