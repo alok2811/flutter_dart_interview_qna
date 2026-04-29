@@ -21,11 +21,13 @@ Converts ciphertext back into original readable data.
 - Same key for encryption and decryption
 - Fast and efficient
 - Used for large data
+- AES = Advanced Encryption Standard
 
 ## 2. Asymmetric Encryption (RSA)
 - Public key (encrypt)
 - Private key (decrypt)
 - Used for secure key exchange
+- RSA = Rivest–Shamir–Adleman
 
 ---
 
